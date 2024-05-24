@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react';
-import FetchData from './fetchData'; // calls data from  components/FetchData 
-import * as d3 from 'd3'; // importing d3
+import React, { useEffect, useRef } from "react";
+import FetchData from "./fetchData"; // calls data from  components/FetchData
+import * as d3 from "d3"; // importing d3
 import * as Plot from "@observablehq/plot";
 
 const TimeSeriesChart = () => {
@@ -14,22 +14,20 @@ const TimeSeriesChart = () => {
     const width = 800 - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
 
-    
-    const svg = d3.select(svgRef.current)
-      .attr('width', width + margin.left + margin.right)
-      .attr('height', height + margin.top + margin.bottom)
-      .append('g')
-      .attr('transform', `translate(${margin.left}, ${margin.top})`)
+    const svg = d3
+      .select(svgRef.current)
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", `translate(${margin.left}, ${margin.top})`)
       .attr("width", width)
-    .attr("height", height)
-    .attr("viewBox", [0, 0, width, height])
-    .attr("style", "max-width: 100%; height: auto; height: intrinsic;");;
-
-
-    
+      .attr("height", height)
+      .attr("viewBox", [0, 0, width, height])
+      .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
 
     // assinging rectangular box to graph to zoom and pan.
-    const view = svg.append("rect")
+    const view = svg
+      .append("rect")
       .attr("class", "view")
       .attr("x", 10)
       .attr("y", 10)
@@ -37,50 +35,61 @@ const TimeSeriesChart = () => {
       .attr("height", height + 1)
       .attr("viewBox", [0, 0, width, height]);
 
-        // Declare the x (horizontal position) scale.
-         const x = d3.scaleUtc(d3.extent(data, d => d.date), [margin.left, width - margin.right]).domain(d3.extent(data, d => new Date(d[0])))
-        .range([0, width]);
+    // Declare the x (horizontal position) scale.
+    const x = d3
+      .scaleUtc(
+        d3.extent(data, (d) => d.Year),
+        [margin.left, width - margin.right],
+      )
+      .domain(d3.extent(data, (d) => new Date(d[0])))
+      .range([0, width]);
 
+    const xAxis = d3.axisBottom(x); // set x-axis.
 
+    // Declare the y (vertical position) scale.
+    const y = d3
+      .scaleLinear(
+        [0, d3.max(data, (d) => d.Temperature)],
+        [height - margin.bottom, margin.top],
+      )
+      .range([height, 0])
+      .domain([d3.min(data, (d) => +d[1]), d3.max(data, (d) => +d[1])])
+      .range([height, 0]);
 
-                const xAxis = d3.axisBottom(x) // set x-axis.
-    
-        // Declare the y (vertical position) scale.
-        const y = d3.scaleLinear([0, d3.max(data, d => d.close)], [height - margin.bottom, margin.top]).range([height, 0]).domain([d3.min(data, d => +d[1]), d3.max(data, d => +d[1])])
-        .range([height, 0]);
+    const yAxis = d3.axisRight(y); // set y-axis.
 
-            const yAxis = d3.axisRight(y) // set y-axis.
-      
-          
-
-    // creating x-axis and y-axis.
+    // // creating x-axis and y-axis.
     const gX = svg.append("g").attr("class", "axis axis--x").call(xAxis);
     const gY = svg.append("g").attr("class", "axis axis--y").call(yAxis);
 
-    const line = d3.line()
-    .x(d => x(d.date))
-    .y(d => y(d.close));
-
-     
-
-    svg.append("path")
-    .attr("fill", "")
-    .attr("stroke", "steelblue")
-    .attr("stroke-width", 1.5)
-    .attr("d", line(data));
+    const line = d3
+      .line()
+      .x((d) => x(d.year))
+      .y((d) => y(d.temperature));
 
     Plot.plot({
-        color: {legend: true},
-        marks: [
-          Plot.ruleY([0]),
-          Plot.lineY(data, {x: "Time", y: "Temperature", stroke: "Symbol"})
-        ]
-      })
-      
+      color: { legend: true },
+      marks: [
+        Plot.ruleY([0]),
+        Plot.lineY(data, { x: "Year", y: "Temperature", stroke: "white" }),
+      ],
+    });
+    svg
+      .append("path")
+      .datum(data)
+      .attr("fill", "none")
+      .attr("stroke", "white")
+      .attr("stroke-width", 1.5)
+      .attr("d", line(data));
+
     // assigning zoom nature to one extent so that it can't go to infinte zoomBehaviour.
-    const zoom = d3.zoom()
+    const zoom = d3
+      .zoom()
       .scaleExtent([1, 40])
-      .translateExtent([[-50, -50], [width + 90, height + 100]])
+      .translateExtent([
+        [-50, -50],
+        [width + 90, height + 100],
+      ])
       .filter(filter)
       .on("zoom", zoomed);
 
@@ -93,19 +102,15 @@ const TimeSeriesChart = () => {
       gY.call(yAxis.scale(transform.rescaleY(y)));
       svg.select("path").attr("transform", transform.toString());
     }
-    
+
     // this functon will reset the zoom to its original value.
     function reset() {
-      svg.transition()
-        .duration(700)
-        .call(zoom.transform, d3.zoomIdentity);
+      svg.transition().duration(700).call(zoom.transform, d3.zoomIdentity);
     }
     // prevent scrolling then apply the default filter
     function filter(event) {
       event.preventDefault();
-      return (!event.ctrlKey || event.type === 'wheel');
-
-      
+      return !event.ctrlKey || event.type === "wheel";
     }
   }, [data]);
 
@@ -114,10 +119,7 @@ const TimeSeriesChart = () => {
     return null;
   }
 
-  return (
-    <svg ref={svgRef}></svg>
-  );
-  
+  return <svg ref={svgRef}></svg>;
 };
 
 export default TimeSeriesChart; // this export will be called in app.js for rendering.
