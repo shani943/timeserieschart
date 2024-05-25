@@ -41,6 +41,7 @@ const TimeSeriesChart = () => {
         d3.extent(data, (d) => d.Year),
         [margin.left, width - margin.right],
       )
+
       .domain(d3.extent(data, (d) => new Date(d[0])))
       .range([0, width]);
 
@@ -62,25 +63,24 @@ const TimeSeriesChart = () => {
     const gX = svg.append("g").attr("class", "axis axis--x").call(xAxis);
     const gY = svg.append("g").attr("class", "axis axis--y").call(yAxis);
 
-    const line = d3
-      .line()
-      .x((d) => x(d.year))
-      .y((d) => y(d.temperature));
+    // Plot.plot({
+    //   color: { legend: true },
+    //   marks: [
+    //     Plot.ruleY([0]),
+    //     Plot.lineY(data, { x: "Year", y: "Temperature", stroke: "Steelblue" }),
+    //   ],
+    // });
 
-    Plot.plot({
-      color: { legend: true },
-      marks: [
-        Plot.ruleY([0]),
-        Plot.lineY(data, { x: "Year", y: "Temperature", stroke: "white" }),
-      ],
-    });
-    svg
-      .append("path")
-      .datum(data)
-      .attr("fill", "none")
-      .attr("stroke", "white")
-      .attr("stroke-width", 1.5)
-      .attr("d", line(data));
+    // const line = d3
+    //   .line()
+    //   .x((d) => x(d.Year))
+    //   .y((d) => y(d.Temperature));
+    // svg
+    //   .append("path")
+    //   .attr("fill", "none")
+    //   .attr("stroke", "steelblue")
+    //   .attr("stroke-width", 1.5)
+    //   .attr("d", line(data));
 
     // assigning zoom nature to one extent so that it can't go to infinte zoomBehaviour.
     const zoom = d3

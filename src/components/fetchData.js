@@ -8,13 +8,11 @@ const FetchData = () => {
       // Mock function to simulate data retrieval from a database
       const simulateDatabaseQuery = () => {
         return [
-          ["Year", "Temperature"],
-          ["2001", "15.5"],
-          ["2002", "16.0"],
-          ["2003", "15.8"],
-          ["2004", "16.2"],
-          ["2005", "16.5"],
-          // Add more mock data points as needed
+          { Year: "2001", Temperature: "15.5" },
+          { Year: "2002", Temperature: "16.0" },
+          { Year: "2003", Temperature: "15.8" },
+          { Year: "2004", Temperature: "16.2" },
+          { Year: "2005", Temperature: "16.5" },
         ];
       };
 
