@@ -1,23 +1,6 @@
-.App {
-  text-align: center;
-}
-.App-header {
-  background-color: #000000;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-.marks path {
-  stroke: #137b80;
-  stroke-width: 4;
-  stroke-linejoin: round;
-  stroke-linecap: round;
-}
-.axis-label {
-  font-size: 10em;
-  fill: #de176a;
+
+.line {
+  fill: none;
+  stroke: rgb(255, 145, 0);
+  stroke-width: 2px;
 }
